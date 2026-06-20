@@ -50,6 +50,21 @@ src/test/java/                    Testes (JUnit + Mockito)
   `db/changelog/db.changelog-master.xml`.
 - As regras iniciais inseridas correspondem exatamente à tabela do enunciado.
 
+## Regra de autorização
+
+A decisão é feita por **correspondência exata** entre a solicitação e as regras cadastradas:
+
+1. Se existe uma regra para a combinação `procedimento` + `idade` + `sexo`, o resultado segue o
+   campo `permitido` dessa regra (**AUTORIZADO** ou **NEGADO**).
+2. Se o procedimento **não está cadastrado** em nenhuma regra, a solicitação é **NEGADA** com
+   justificativa ("código não cadastrado").
+3. Se o procedimento existe, mas não há regra para aquela idade/sexo, a solicitação é **NEGADA**
+   com justificativa.
+
+Toda solicitação avaliada é **persistida** (tabela `solicitacao_autorizacao`) com status e motivo.
+A lógica fica isolada em `AutorizacaoService`, coberta por testes unitários em
+`AutorizacaoServiceTest`.
+
 ## Build
 
 ```bash
@@ -81,7 +96,18 @@ O artefato será gerado em `target/autorizacao.war`.
 | Recurso | URL |
 |---------|-----|
 | Aplicação | `http://localhost:8080/autorizacao/` |
+| Solicitação e consulta de autorizações | `http://localhost:8080/autorizacao/autorizacoes` |
 | Console de administração do WildFly (requer usuário criado via `bin/add-user.sh`) | `http://localhost:9990/` |
+
+## Fluxo da aplicação
+
+A página inicial (`index.jsp`) leva à tela de autorizações (`/autorizacoes`), atendida pelo
+`AutorizacaoServlet`:
+
+- **GET `/autorizacoes`**: exibe o formulário e a lista das solicitações já avaliadas.
+- **POST `/autorizacoes`**: recebe `codigoProcedimento`, `idade` e `sexo` (`M`/`F`), aplica a
+  regra de autorização (`AutorizacaoService`), persiste a solicitação e reapresenta o resultado
+  (autorizado/negado com o motivo) junto da lista atualizada.
 
 ## Testes
 
