@@ -15,6 +15,7 @@ cadastradas. Procedimentos não cadastrados nas regras são **negados** com mens
 - Banco de dados Oracle (XE) em container Docker
 - Liquibase (versionamento de banco)
 - JUnit 5 + Mockito (testes)
+- AJAX (`fetch`) para consultas e avaliações sem recarregar a página
 - Servidor de aplicação: **JBoss EAP 8** (Jakarta EE 10)
 - Docker + Docker Compose (Oracle + aplicação)
 
@@ -197,9 +198,10 @@ A página inicial (`index.jsp`) leva à tela de autorizações (`/autorizacoes`)
 `AutorizacaoServlet`:
 
 - **GET `/autorizacoes`**: exibe o formulário e a lista das solicitações já avaliadas.
-- **POST `/autorizacoes`**: recebe `codigoProcedimento`, `idade` e `sexo` (`M`/`F`), aplica a
-  regra de autorização (`AutorizacaoService`), persiste a solicitação e reapresenta o resultado
-  (autorizado/negado com o motivo) junto da lista atualizada.
+- **POST `/autorizacoes`**: fallback tradicional (recarrega a página).
+
+As interações da tela usam **AJAX** (`fetch` na JSP): o formulário envia POST `/autorizacoes` e a
+mesma JSP devolve só o **fragmento HTML** (resultado + tabela) para substituir na página sem reload.
 
 ## Testes
 
