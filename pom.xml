@@ -18,7 +18,7 @@
 
         <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
         <hibernate.version>6.4.4.Final</hibernate.version>
-        <h2.version>2.2.224</h2.version>
+        <ojdbc.version>23.4.0.24.05</ojdbc.version>
         <liquibase.version>4.27.0</liquibase.version>
         <junit.version>5.10.2</junit.version>
         <mockito.version>5.11.0</mockito.version>
@@ -39,9 +39,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${h2.version}</version>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc11</artifactId>
+            <version>${ojdbc.version}</version>
         </dependency>
 
         <dependency>

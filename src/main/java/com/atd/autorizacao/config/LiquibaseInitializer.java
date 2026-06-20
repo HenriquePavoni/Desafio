@@ -18,13 +18,11 @@ import java.sql.DriverManager;
 public class LiquibaseInitializer implements ServletContextListener {
 
     private static final String CHANGELOG = "db/changelog/db.changelog-master.xml";
-    private static final String JDBC_URL = "jdbc:h2:mem:autorizacao;DB_CLOSE_DELAY=-1";
-    private static final String JDBC_USER = "sa";
-    private static final String JDBC_PASSWORD = "";
 
     @Override
     public void contextInitialized(ServletContextEvent event) {
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
+        try (Connection connection = DriverManager.getConnection(
+                DatabaseConfig.url(), DatabaseConfig.user(), DatabaseConfig.password())) {
             Database database = DatabaseFactory.getInstance()
                     .findCorrectDatabaseImplementation(new JdbcConnection(connection));
             try (Liquibase liquibase = new Liquibase(CHANGELOG, new ClassLoaderResourceAccessor(), database)) {

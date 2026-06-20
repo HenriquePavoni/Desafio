@@ -4,7 +4,10 @@
 <%
     List<SolicitacaoAutorizacao> solicitacoes =
             (List<SolicitacaoAutorizacao>) request.getAttribute("solicitacoes");
+    boolean ajax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+    boolean temResultado = request.getAttribute("resultado") != null || request.getAttribute("erro") != null;
 %>
+<% if (!ajax) { %>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -19,7 +22,7 @@
 </header>
 <main>
     <section class="card">
-        <form method="post" action="${pageContext.request.contextPath}/autorizacoes">
+        <form id="form-autorizacao">
             <label for="codigoProcedimento">Procedimento</label>
             <input type="text" id="codigoProcedimento" name="codigoProcedimento" required>
 
@@ -34,48 +37,84 @@
 
             <button type="submit">Avaliar</button>
         </form>
-
-        <% if (request.getAttribute("resultado") != null) { %>
-            <p class="resultado status-${resultado.status}">
-                <strong>${resultado.status}</strong> &mdash; ${resultado.motivo}
-            </p>
-        <% } %>
-        <% if (request.getAttribute("erro") != null) { %>
-            <p class="resultado erro">${erro}</p>
-        <% } %>
     </section>
 
-    <section class="card">
-        <h2>Solicitacoes avaliadas</h2>
-        <table>
-            <thead>
+    <div id="conteudo-resposta">
+<% } %>
+
+<% if (temResultado) { %>
+<section class="card">
+    <% if (request.getAttribute("resultado") != null) { %>
+        <p class="resultado status-${resultado.status}">
+            <strong>${resultado.status}</strong> &mdash; ${resultado.motivo}
+        </p>
+    <% } %>
+    <% if (request.getAttribute("erro") != null) { %>
+        <p class="resultado erro">${erro}</p>
+    <% } %>
+</section>
+<% } %>
+
+<section class="card">
+    <h2>Solicitacoes avaliadas</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Procedimento</th>
+            <th>Idade</th>
+            <th>Sexo</th>
+            <th>Status</th>
+            <th>Motivo</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% if (solicitacoes != null && !solicitacoes.isEmpty()) {
+               for (SolicitacaoAutorizacao s : solicitacoes) { %>
             <tr>
-                <th>Procedimento</th>
-                <th>Idade</th>
-                <th>Sexo</th>
-                <th>Status</th>
-                <th>Motivo</th>
+                <td><%= s.getCodigoProcedimento() %></td>
+                <td><%= s.getIdade() %></td>
+                <td><%= s.getSexo() %></td>
+                <td><%= s.getStatus() %></td>
+                <td><%= s.getMotivo() %></td>
             </tr>
-            </thead>
-            <tbody>
-            <% if (solicitacoes != null && !solicitacoes.isEmpty()) {
-                   for (SolicitacaoAutorizacao s : solicitacoes) { %>
-                <tr>
-                    <td><%= s.getCodigoProcedimento() %></td>
-                    <td><%= s.getIdade() %></td>
-                    <td><%= s.getSexo() %></td>
-                    <td><%= s.getStatus() %></td>
-                    <td><%= s.getMotivo() %></td>
-                </tr>
-            <%     }
-               } else { %>
-                <tr>
-                    <td colspan="5">Nenhuma solicitacao avaliada ainda.</td>
-                </tr>
-            <% } %>
-            </tbody>
-        </table>
-    </section>
+        <%     }
+           } else { %>
+            <tr>
+                <td colspan="5">Nenhuma solicitacao avaliada ainda.</td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+</section>
+
+<% if (!ajax) { %>
+    </div>
 </main>
+<script>
+    document.getElementById("form-autorizacao").addEventListener("submit", function (event) {
+        event.preventDefault();
+        fetch("${pageContext.request.contextPath}/autorizacoes", {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams(new FormData(event.target))
+        })
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error("Erro ao avaliar solicitacao.");
+                }
+                return response.text();
+            })
+            .then(function (html) {
+                document.getElementById("conteudo-resposta").innerHTML = html;
+            })
+            .catch(function () {
+                alert("Falha ao comunicar com o servidor.");
+            });
+    });
+</script>
 </body>
 </html>
+<% } %>
