@@ -18,6 +18,8 @@ import java.io.IOException;
 public class AutorizacaoServlet extends HttpServlet {
 
     private static final String VIEW = "/WEB-INF/views/autorizacoes.jsp";
+    private static final String ERRO_VALIDACAO =
+            "Dados invalidos: informe procedimento, idade (numero) e sexo (M ou F).";
 
     private transient AutorizacaoService autorizacaoService;
     private transient SolicitacaoRepository solicitacaoRepository;
@@ -51,7 +53,7 @@ public class AutorizacaoServlet extends HttpServlet {
             AutorizacaoResponse resultado = autorizacaoService.avaliar(solicitacao);
             request.setAttribute("resultado", resultado);
         } catch (IllegalArgumentException | NullPointerException e) {
-            request.setAttribute("erro", "Dados invalidos: informe procedimento, idade (numero) e sexo (M ou F).");
+            request.setAttribute("erro", ERRO_VALIDACAO);
         }
         request.setAttribute("solicitacoes", solicitacaoRepository.listarTodas());
         request.getRequestDispatcher(VIEW).forward(request, response);
