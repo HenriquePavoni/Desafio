@@ -7,6 +7,9 @@
     <persistence-unit name="autorizacaoPU" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
+        <class>com.atd.autorizacao.model.RegraAutorizacao</class>
+        <class>com.atd.autorizacao.model.SolicitacaoAutorizacao</class>
+
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:mem:autorizacao;DB_CLOSE_DELAY=-1"/>
