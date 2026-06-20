@@ -81,7 +81,18 @@ O artefato será gerado em `target/autorizacao.war`.
 | Recurso | URL |
 |---------|-----|
 | Aplicação | `http://localhost:8080/autorizacao/` |
+| Solicitação e consulta de autorizações | `http://localhost:8080/autorizacao/autorizacoes` |
 | Console de administração do WildFly (requer usuário criado via `bin/add-user.sh`) | `http://localhost:9990/` |
+
+## Fluxo da aplicação
+
+A página inicial (`index.jsp`) leva à tela de autorizações (`/autorizacoes`), atendida pelo
+`AutorizacaoServlet`:
+
+- **GET `/autorizacoes`**: exibe o formulário e a lista das solicitações já avaliadas.
+- **POST `/autorizacoes`**: recebe `codigoProcedimento`, `idade` e `sexo` (`M`/`F`), aplica a
+  regra de autorização (`AutorizacaoService`), persiste a solicitação e reapresenta o resultado
+  (autorizado/negado com o motivo) junto da lista atualizada.
 
 ## Testes
 
