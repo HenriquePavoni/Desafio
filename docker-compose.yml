@@ -1,0 +1,33 @@
+services:
+  oracle:
+    image: gvenzl/oracle-xe:21-slim-faststart
+    environment:
+      ORACLE_PASSWORD: oracle
+      APP_USER: autorizacao
+      APP_USER_PASSWORD: autorizacao
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 60s
+
+  app:
+    build: .
+    depends_on:
+      oracle:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:oracle:thin:@oracle:1521/XEPDB1
+      DB_USER: autorizacao
+      DB_PASSWORD: autorizacao
+      DB_DRIVER: oracle.jdbc.OracleDriver
+    ports:
+      - "8080:8080"
+
+volumes:
+  oracle-data:
