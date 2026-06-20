@@ -12,16 +12,89 @@ cadastradas. Procedimentos não cadastrados nas regras são **negados** com mens
 - Jakarta EE 10 (Servlets + JSP)
 - Maven (build → `.war`)
 - Hibernate ORM 6 (JPA)
-- Banco de dados H2 (em memória)
+- Banco de dados Oracle (XE) em container Docker
 - Liquibase (versionamento de banco)
 - JUnit 5 + Mockito (testes)
-- Servidor de aplicação: WildFly / JBoss EAP (Jakarta EE 10)
+- Servidor de aplicação: **JBoss EAP 8** (Jakarta EE 10)
+- Docker + Docker Compose (Oracle + aplicação)
 
 ## Pré-requisitos
 
+- **Docker** e **Docker Compose** instalados e com o daemon em execução
+- **Conta Red Hat** (gratuita): [Red Hat Developer](https://developers.redhat.com/products/openjdk/download)
+
+Para compilar/testar localmente (sem Docker):
+
 - JDK 17 ou superior
 - Maven 3.8+
-- Um servidor de aplicação compatível com Jakarta EE 10 (WildFly 27+ / JBoss EAP 8)
+
+## Execução
+
+A aplicação sobe via **Docker Compose** com dois serviços:
+
+1. **`oracle`** — banco Oracle XE (`gvenzl/oracle-xe`)
+2. **`app`** — aplicação no **JBoss EAP 8** (imagem construída pelo `Dockerfile`)
+
+O serviço `app` só inicia depois que o Oracle está saudável (`healthcheck`). O `Dockerfile`
+compila o `.war`, provisiona o JBoss EAP 8 via Galleon e faz o deploy em
+`standalone/deployments/`.
+
+### Passo a passo
+
+**1. Autentique no registry de imagens do JBoss EAP** (necessário apenas na primeira vez, ou
+quando a sessão expirar):
+
+```bash
+docker login registry.redhat.io
+```
+
+Use o usuário e a senha da sua conta Red Hat.
+
+**2. Na raiz do projeto, suba os containers:**
+
+```bash
+docker compose up --build
+```
+
+Na **primeira execução**, o build pode demorar alguns minutos:
+
+- download das imagens base (Oracle + JBoss EAP);
+- provisionamento do servidor EAP (estágio Galleon no `Dockerfile`);
+- inicialização do Oracle (até ~1–2 min para ficar *healthy*).
+
+**3. Aguarde a aplicação ficar pronta.** Nos logs, espere mensagens de deploy bem-sucedido do
+`.war` e ausência de erros de conexão com o banco.
+
+**4. Acesse no navegador:**
+
+| Recurso | URL |
+|---------|-----|
+| Aplicação | `http://localhost:8080/autorizacao/` |
+| Solicitação e consulta de autorizações | `http://localhost:8080/autorizacao/autorizacoes` |
+
+Para rodar em segundo plano:
+
+```bash
+docker compose up --build -d
+```
+
+Para acompanhar os logs:
+
+```bash
+docker compose logs -f app
+```
+
+**5. Para parar:**
+
+```bash
+docker compose down
+```
+
+Para remover também os dados persistidos do banco:
+
+```bash
+docker compose down -v
+```
 
 ## Estrutura do projeto
 
@@ -43,12 +116,25 @@ src/test/java/                    Testes (JUnit + Mockito)
 
 ## Banco de dados
 
-- Banco **H2 em memória**: `jdbc:h2:mem:autorizacao;DB_CLOSE_DELAY=-1`
-- Usuário: `sa` / Senha: *(vazia)*
+- Banco **Oracle XE** rodando em container Docker (`gvenzl/oracle-xe`).
 - O schema e os dados iniciais são criados automaticamente pelo **Liquibase**
   na inicialização da aplicação (`LiquibaseInitializer`), a partir de
   `db/changelog/db.changelog-master.xml`.
 - As regras iniciais inseridas correspondem exatamente à tabela do enunciado.
+
+### Configuração da conexão
+
+A conexão é lida em `DatabaseConfig` a partir de **variáveis de ambiente obrigatórias**,
+definidas no `docker-compose.yml` para o serviço `app`:
+
+| Variável | Descrição |
+|----------|-----------|
+| `DB_URL` | URL JDBC do Oracle (`jdbc:oracle:thin:@oracle:1521/XEPDB1`) |
+| `DB_USER` | Usuário da aplicação |
+| `DB_PASSWORD` | Senha do usuário |
+| `DB_DRIVER` | Driver JDBC (`oracle.jdbc.OracleDriver`) |
+
+Sem essas variáveis, a aplicação falha na inicialização.
 
 ## Regra de autorização
 
@@ -82,22 +168,28 @@ O artefato será gerado em `target/autorizacao.war`.
 > mvn clean package
 > ```
 
-## Execução
+> **Nota:** para rodar a aplicação, use `docker compose up --build` (o build do `.war` ocorre
+> dentro do `Dockerfile`). O `mvn clean package` local é opcional, útil para desenvolvimento e CI.
 
-### Deploy no WildFly / JBoss
+### Consultando o banco (SELECTs)
 
-1. Faça o build: `mvn clean package`.
-2. Copie `target/autorizacao.war` para `WILDFLY_HOME/standalone/deployments/`.
-3. Inicie o servidor: `WILDFLY_HOME/bin/standalone.sh`.
-4. Acesse a aplicação (veja as URLs abaixo).
+Como o Oracle roda em container com a porta `1521` exposta, é possível conectar com qualquer
+cliente SQL (DBeaver, SQLDeveloper, `sqlplus`) usando:
 
-### URLs de acesso
+- **Host:** `localhost` · **Porta:** `1521` · **Service:** `XEPDB1`
+- **JDBC URL:** `jdbc:oracle:thin:@localhost:1521/XEPDB1`
+- **Usuário:** `autorizacao` · **Senha:** `autorizacao`
 
-| Recurso | URL |
-|---------|-----|
-| Aplicação | `http://localhost:8080/autorizacao/` |
-| Solicitação e consulta de autorizações | `http://localhost:8080/autorizacao/autorizacoes` |
-| Console de administração do WildFly (requer usuário criado via `bin/add-user.sh`) | `http://localhost:9990/` |
+Exemplo via `sqlplus` dentro do container:
+
+```bash
+docker compose exec oracle sqlplus autorizacao/autorizacao@localhost:1521/XEPDB1
+```
+
+```sql
+SELECT * FROM regra_autorizacao;
+SELECT * FROM solicitacao_autorizacao;
+```
 
 ## Fluxo da aplicação
 
