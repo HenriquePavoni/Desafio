@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
+
+    <changeSet id="002-insert-regras-iniciais" author="henrique.pavoni">
+        <insert tableName="regra_autorizacao">
+            <column name="codigo_procedimento" value="1234"/>
+            <column name="idade" valueNumeric="10"/>
+            <column name="sexo" value="M"/>
+            <column name="permitido" valueBoolean="false"/>
+        </insert>
+        <insert tableName="regra_autorizacao">
+            <column name="codigo_procedimento" value="4567"/>
+            <column name="idade" valueNumeric="20"/>
+            <column name="sexo" value="M"/>
+            <column name="permitido" valueBoolean="true"/>
+        </insert>
+        <insert tableName="regra_autorizacao">
+            <column name="codigo_procedimento" value="6789"/>
+            <column name="idade" valueNumeric="10"/>
+            <column name="sexo" value="F"/>
+            <column name="permitido" valueBoolean="false"/>
+        </insert>
+        <insert tableName="regra_autorizacao">
+            <column name="codigo_procedimento" value="6789"/>
+            <column name="idade" valueNumeric="10"/>
+            <column name="sexo" value="M"/>
+            <column name="permitido" valueBoolean="true"/>
+        </insert>
+        <insert tableName="regra_autorizacao">
+            <column name="codigo_procedimento" value="1234"/>
+            <column name="idade" valueNumeric="20"/>
+            <column name="sexo" value="M"/>
+            <column name="permitido" valueBoolean="true"/>
+        </insert>
+        <insert tableName="regra_autorizacao">
+            <column name="codigo_procedimento" value="4567"/>
+            <column name="idade" valueNumeric="30"/>
+            <column name="sexo" value="F"/>
+            <column name="permitido" valueBoolean="true"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

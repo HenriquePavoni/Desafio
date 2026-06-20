@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
+
+    <changeSet id="001-create-table-regra-autorizacao" author="henrique.pavoni">
+        <createTable tableName="regra_autorizacao">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="codigo_procedimento" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="idade" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sexo" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permitido" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-create-table-solicitacao-autorizacao" author="henrique.pavoni">
+        <createTable tableName="solicitacao_autorizacao">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="codigo_procedimento" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="idade" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sexo" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="motivo" type="VARCHAR(255)"/>
+            <column name="data_solicitacao" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

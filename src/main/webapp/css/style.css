@@ -1,0 +1,26 @@
+:root {
+    --primary: #1f6f5c;
+    --bg: #f5f7f6;
+    --text: #1c2b27;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+header {
+    background-color: var(--primary);
+    color: #ffffff;
+    padding: 1rem 1.5rem;
+}
+
+main {
+    padding: 1.5rem;
+}
