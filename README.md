@@ -50,6 +50,21 @@ src/test/java/                    Testes (JUnit + Mockito)
   `db/changelog/db.changelog-master.xml`.
 - As regras iniciais inseridas correspondem exatamente à tabela do enunciado.
 
+## Regra de autorização
+
+A decisão é feita por **correspondência exata** entre a solicitação e as regras cadastradas:
+
+1. Se existe uma regra para a combinação `procedimento` + `idade` + `sexo`, o resultado segue o
+   campo `permitido` dessa regra (**AUTORIZADO** ou **NEGADO**).
+2. Se o procedimento **não está cadastrado** em nenhuma regra, a solicitação é **NEGADA** com
+   justificativa ("código não cadastrado").
+3. Se o procedimento existe, mas não há regra para aquela idade/sexo, a solicitação é **NEGADA**
+   com justificativa.
+
+Toda solicitação avaliada é **persistida** (tabela `solicitacao_autorizacao`) com status e motivo.
+A lógica fica isolada em `AutorizacaoService`, coberta por testes unitários em
+`AutorizacaoServiceTest`.
+
 ## Build
 
 ```bash
