@@ -6,6 +6,32 @@ Sistema de controle de autorizações de procedimentos médicos para um plano de
 A autorização de um procedimento é decidida com base em **idade** e **sexo**, conforme as regras
 cadastradas. Procedimentos não cadastrados nas regras são **negados** com mensagem justificada.
 
+## Telas do sistema
+
+### Tela inicial
+
+Página de entrada da aplicação (`index.jsp`). A partir dela, o usuário acessa a funcionalidade
+principal pelo link **Solicitar e consultar autorizacoes**.
+
+**URL:** `http://localhost:8080/autorizacao/`
+
+![Tela inicial do sistema](docs/screenshots/tela-inicial.png)
+
+### Tela de solicitacao e consulta
+
+Tela principal de autorizacao (`/autorizacoes`), composta por:
+
+- **Formulario** — informar procedimento, idade e sexo (`M`/`F`) e clicar em **Avaliar**.
+- **Resultado** — exibido apos a avaliacao (AUTORIZADO ou NEGADO, com motivo).
+- **Tabela** — historico das solicitacoes ja avaliadas e persistidas no banco.
+
+A avaliacao usa **AJAX**: ao enviar o formulario, a pagina nao recarrega; apenas o resultado e
+a tabela sao atualizados.
+
+**URL:** `http://localhost:8080/autorizacao/autorizacoes`
+
+![Tela de solicitacao e consulta de autorizacoes](docs/screenshots/tela-autorizacoes.png)
+
 ## Stack
 
 - Java 17+ (compatível com Java 21)
@@ -96,32 +122,6 @@ Para remover também os dados persistidos do banco:
 ```bash
 docker compose down -v
 ```
-
-## Telas do sistema
-
-### Tela inicial
-
-Página de entrada da aplicação (`index.jsp`). A partir dela, o usuário acessa a funcionalidade
-principal pelo link **Solicitar e consultar autorizacoes**.
-
-**URL:** `http://localhost:8080/autorizacao/`
-
-![Tela inicial do sistema](docs/screenshots/tela-inicial.png)
-
-### Tela de solicitacao e consulta
-
-Tela principal de autorizacao (`/autorizacoes`), composta por:
-
-- **Formulario** — informar procedimento, idade e sexo (`M`/`F`) e clicar em **Avaliar**.
-- **Resultado** — exibido apos a avaliacao (AUTORIZADO ou NEGADO, com motivo).
-- **Tabela** — historico das solicitacoes ja avaliadas e persistidas no banco.
-
-A avaliacao usa **AJAX**: ao enviar o formulario, a pagina nao recarrega; apenas o resultado e
-a tabela sao atualizados.
-
-**URL:** `http://localhost:8080/autorizacao/autorizacoes`
-
-![Tela de solicitacao e consulta de autorizacoes](docs/screenshots/tela-autorizacoes.png)
 
 ## Estrutura do projeto
 
