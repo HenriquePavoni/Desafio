@@ -12,7 +12,7 @@
         <h1>Sistema de Autorizacao de Procedimentos</h1>
     </header>
     <main>
-        <p>Aplicacao inicializada.</p>
+        <p><a class="link" href="${pageContext.request.contextPath}/autorizacoes">Solicitar e consultar autorizacoes</a></p>
     </main>
 </body>
 </html>

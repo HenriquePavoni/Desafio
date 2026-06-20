@@ -23,4 +23,72 @@ header {
 
 main {
     padding: 1.5rem;
+    max-width: 900px;
+}
+
+.link {
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.card {
+    background: #ffffff;
+    border: 1px solid #e0e5e3;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+form label {
+    display: block;
+    margin-top: 0.75rem;
+    font-weight: 600;
+}
+
+form input,
+form select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+    border: 1px solid #c7cfcc;
+    border-radius: 4px;
+}
+
+button {
+    margin-top: 1rem;
+    background-color: var(--primary);
+    color: #ffffff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+}
+
+th, td {
+    border: 1px solid #e0e5e3;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.resultado {
+    margin-top: 1rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 4px;
+}
+
+.status-AUTORIZADO {
+    background: #e3f4ea;
+    color: #156c3b;
+}
+
+.status-NEGADO,
+.erro {
+    background: #fdeaea;
+    color: #9b2c2c;
 }
