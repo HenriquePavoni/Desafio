@@ -238,7 +238,7 @@ mvn test
 ## Integração Contínua (CI)
 
 O projeto usa **GitHub Actions** (`.github/workflows/ci.yml`). A cada `push` ou `pull request`
-na branch `main`, o pipeline:
+na branch `main` ou `develop`, o pipeline:
 
 1. Faz checkout do código;
 2. Configura o **JDK 17** (Temurin) com cache do Maven;
